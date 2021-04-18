@@ -15,12 +15,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     controller = AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    animation = Tween<double>(begin: 0, end: 300).animate(controller)
-      ..addListener(() {
-        setState(() {
-          // The state that has changed here is the animation object’s value.
-        });
-      });
+    animation = Tween<double>(begin: 0, end: 300).animate(controller);
     controller.forward();
   }
 
@@ -31,7 +26,15 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   }
 
   @override
+  Widget build(BuildContext context) => AnimatedLogo(animation: animation);
+}
+
+class AnimatedLogo extends AnimatedWidget {
+  AnimatedLogo({Key? key, required Animation<double> animation})
+      : super(key: key, listenable: animation);
+
   Widget build(BuildContext context) {
+    final animation = listenable as Animation<double>;
     return Center(
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 10),
