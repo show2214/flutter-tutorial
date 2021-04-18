@@ -15,15 +15,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     controller = AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    animation = Tween<double>(begin: 0, end: 300).animate(controller)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          controller.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          controller.forward();
-        }
-      })
-      ..addStatusListener((state) => print('$state'));
+    animation = Tween<double>(begin: 0, end: 300).animate(controller);
     controller.forward();
   }
 
@@ -34,7 +26,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedLogo(animation: animation);
+  Widget build(BuildContext context) => GrowTransition(child: LogoWidget(), animation: animation);
 }
 
 class AnimatedLogo extends AnimatedWidget {
@@ -52,4 +44,30 @@ class AnimatedLogo extends AnimatedWidget {
       ),
     );
   }
+}
+
+class LogoWidget extends StatelessWidget {
+  // Leave out the height and width so it fills the animating parent
+  Widget build(BuildContext context) => Container(
+    margin: EdgeInsets.symmetric(vertical: 10),
+    child: FlutterLogo(),
+  );
+}
+
+class GrowTransition extends StatelessWidget {
+  GrowTransition({required this.child, required this.animation});
+
+  final Widget child;
+  final Animation<double> animation;
+
+  Widget build(BuildContext context) => Center(
+    child: AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) => Container(
+          height: animation.value,
+          width: animation.value,
+          child: child,
+        ),
+        child: child),
+  );
 }
